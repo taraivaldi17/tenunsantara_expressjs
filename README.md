@@ -14,7 +14,7 @@ dengan response status 404 data not found
 Adapun dependency yang diinstall sebagai berikut:
   * Express
   * MySQL
-  * Nodemon
+  * Nodemoncd
 
 ## Skeleton
 Untuk memudahkan dalam pengerjaan projek ini ini, silahkan ikuti susunan berikut
