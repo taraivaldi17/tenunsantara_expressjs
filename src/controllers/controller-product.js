@@ -131,8 +131,8 @@ const getDataProductByWeavingName = (req, res) => {
 
         connection.query(
             `
-            SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, name, weaving_category_slug FROM weaving
-            LEFT JOIN products ON products.weaving_id = weaving.id
+            SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
+            LEFT JOIN weaving ON products.weaving_id = weaving.id
             LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id
             WHERE weaving.weaving_slug = ?
             ;`,
