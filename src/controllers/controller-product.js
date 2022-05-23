@@ -63,7 +63,7 @@ const getDataProductBySlug = (req, res) => {
 
         connection.query(
             `
-            SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
+            SELECT products.id, product_slug, title, image, products.desc, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving.weaving_desc, weaving_category.name, weaving_category.weaving_category_slug FROM products
             LEFT JOIN weaving ON products.weaving_id = weaving.id
             LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id
             WHERE products.product_slug = ?
@@ -80,11 +80,13 @@ const getDataProductBySlug = (req, res) => {
                         id: item.id,
                         title: item.title,
                         image: item.image,
+                        desc: item.desc,
                         weaving: {
                             id: item.weaving_id,
                             weaving_name: item.weaving_name,
                             weaving_etnik: item.weaving_etnik,
                             weaving_category: item.name,
+                            weaving_desc: item.weaving_desc,
                             _links: {
                                 detail: `product/${item.product_slug}`,
                                 products_weaving: `product/${item.weaving_slug}`,
