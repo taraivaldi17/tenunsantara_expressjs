@@ -59,13 +59,7 @@ const getDataProduct = (req, res) => {
 const getDataProductBySlug = (req, res) => {
     pool.getConnection(function (err, connection) {
 
-        if (err) {
-            res.status(500).json({
-                success: false,
-                message: 'Something went wrong!',
-                data: err
-            });
-        };
+        if (err) throw err;
 
         connection.query(
             `
@@ -77,10 +71,7 @@ const getDataProductBySlug = (req, res) => {
             [req.params.product_slug],
 
             function (error, results) {
-                // if (error) throw error;
-                if (results.length < 1) {
-                    return res.redirect(`/products`);
-                }
+                if (error) throw error;
 
                 const response = [];
 
@@ -121,13 +112,7 @@ const getDataProductBySlug = (req, res) => {
 const getDataProductByWeavingName = (req, res) => {
     pool.getConnection(function (err, connection) {
 
-        if (err) {
-            res.status(500).json({
-                success: false,
-                message: 'Something went wrong!',
-                data: err
-            });
-        };
+        if (err) throw err;
 
         connection.query(
             `
@@ -139,10 +124,7 @@ const getDataProductByWeavingName = (req, res) => {
             [req.params.weaving_slug],
 
             function (error, results) {
-                // if (error) throw error;
-                if (results.length < 1) {
-                    return res.redirect(`/products`);
-                }
+                if (error) throw error;
 
                 const response = [];
 
@@ -181,18 +163,9 @@ const getDataProductByWeavingName = (req, res) => {
 
 
 const getDataProductByWeavingCategory = (req, res) => {
-    // const weaving_slug = req.params.weaving_slug
-    // const weaving_category_slug = req.params.weaving_category_slug
-
     pool.getConnection(function (err, connection) {
 
-        if (err) {
-            res.status(500).json({
-                success: false,
-                message: 'Something went wrong!',
-                data: err
-            });
-        };
+        if (err) throw err;
 
         connection.query(
             `
@@ -204,10 +177,7 @@ const getDataProductByWeavingCategory = (req, res) => {
             [req.params.weaving_slug, req.params.weaving_category_slug],
 
             function (error, results) {
-                // if (error) throw error;
-                if (results.length < 1) {
-                    return res.redirect(`/products/${req.params.weaving_slug}`);
-                }
+                if (error) throw error;
 
                 const response = [];
 
