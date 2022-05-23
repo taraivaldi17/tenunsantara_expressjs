@@ -2,8 +2,10 @@
 Pembuatan Restfull API Project Tenunsantara
 
 ## ATTENTION
-Projek masih dalam tahap perkambangan, URL untuk mengakses detail produk tenun (*localhost:8000/products/{product_slug}*) masih belum dijalankan karena bentrok dengan url
-*localhost:8000/products/{weaving_slug}*.
+* Projek masih dalam tahap perkambangan, URL untuk mengakses detail produk tenun (*localhost:8000/products/{product_slug}*) masih belum dijalankan karena bentrok dengan url localhost:8000/products/{weaving_slug}.
+* Data tabel weaving dan weaving_category sudah cukup (mau ditambahkan silahkan) tinggal tabel products kurang lengkap, menyesuaikan dengan data di tabel weaving_category dan weaving
+
+
 
 ## Persiapan
   * nodejs pada device
