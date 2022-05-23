@@ -15,7 +15,7 @@ Pembuatan Restfull API Project Tenunsantara
 Adapun dependency yang diinstall sebagai berikut:
   * Express
   * MySQL
-  * Nodemoncd
+  * Nodemon
 
 ## Skeleton
 Untuk memudahkan dalam pengerjaan projek ini ini, silahkan ikuti susunan berikut
