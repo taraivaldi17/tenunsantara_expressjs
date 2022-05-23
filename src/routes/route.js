@@ -8,15 +8,14 @@ const {
 // GET localhost:8000/products => Ambil semua data product
 router.get('/api/products', product.getDataProduct);
 
-// GET localhost:8000/products/{product_slug} => Menampilkan detail produk berdasarkan {product_slug}
-// router.get('/api/products/:product_slug', product.getDataProductBySlug);
-
 // GET localhost:8000/products/{weaving_slug} => Menampilkan semua data product berdasarkan {weaving_name} / {weaving_slug}
-router.get('/api/products/:weaving_slug', product.getDataProductByWeavingName);
+// router.get('/api/products/:weaving_slug', product.getDataProductByWeavingName);
 
 // GET localhost:8000/products/{weaving_slug}/{weaving_category_slug}, - Menampilkan list produk berdasarkan {weaving_name}
 router.get('/api/products/:weaving_slug/:weaving_category_slug', product.getDataProductByWeavingCategory);
 
+// GET localhost:8000/products/{product_slug} => Menampilkan detail produk berdasarkan {product_slug}
+router.get('/api/products/:product_slug', product.getDataProductBySlug);
 
 //----------------------- Routing Data Tenun -----------------------//
 // GET localhost:8000/ => Ambil semua data tenun
