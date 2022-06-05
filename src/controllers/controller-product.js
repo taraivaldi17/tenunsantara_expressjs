@@ -1,279 +1,88 @@
-const config = require('../configs/database');
-const mysql = require('mysql');
-const pool = mysql.createPool(config);
+const {
+    getProduct,
+    getProductDetail,
+    getProductWeaving,
+    getProductByWeavingAndWeavingCategorySlug,
+    insertProduct,
+    updateProduct,
+    deleteProduct
+} = require('../models/model-product');
 
-pool.on('error', (err) => {
-    console.error(err);
-});
-
-// Ambil semua data product
 const getDataProduct = (req, res) => {
-    pool.getConnection(function (err, connection) {
-        if (err) throw err;
-
-        connection.query(
-            `
-            SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
-            LEFT JOIN weaving ON products.weaving_id = weaving.id
-            LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id            
-            ;`,
-
-            function (error, results) {
-                if (error) throw error;
-
-                const response = [];
-
-                results.forEach(item => {
-                    response.push({
-                        id: item.id,
-                        title: item.title,
-                        image: item.image,
-                        weaving: {
-                            id: item.weaving_id,
-                            weaving_name: item.weaving_name,
-                            weaving_etnik: item.weaving_etnik,
-                            weaving_category: item.name,
-                            _links: {
-                                detail: `product/${item.product_slug}`,
-                                products_weaving: `product/${item.weaving_slug}`,
-                                products_weaving_category: `product/${item.weaving_slug}/${item.weaving_category_slug}`,
-                                wiki: `https://id.wikipedia.org/wiki/${item.weaving_name}`
-                            }
-                        }
-                    })
-                })
-
-                res.status(200).json({
-                    response_code: '200',
-                    response_desc: 'Products fetched successfully',
-                    success: true,
-                    data: response
-                });
-            }
-        );
-        connection.release();
-    })
+    const querySql = `
+    SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
+    LEFT JOIN weaving ON products.weaving_id = weaving.id
+    LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id            
+    ;`;
+    getProduct(res, querySql);
 }
 
-// Ambil semua data product berdasarkan {product_slug} / {product_slug}
-const getDataProductBySlug = (req, res) => {
-    pool.getConnection(function (err, connection) {
-
-        if (err) throw err;
-
-        connection.query(
-            `
+const getDataProductByDetail = (req, res) => {
+    // res.send('Hello from get products/:product_slug');
+    const searchProductSlug =
+        `
             SELECT products.id, product_slug, title, image, products.desc, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving.weaving_desc, weaving_category.name, weaving_category.weaving_category_slug FROM products
             LEFT JOIN weaving ON products.weaving_id = weaving.id
             LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id
             WHERE products.product_slug = ?
-            ;`,
-            [req.params.product_slug],
+        ;`;
 
-            function (error, results) {
-                if (error) throw error;
-
-                const response = [];
-
-                results.forEach(item => {
-                    response.push({
-                        id: item.id,
-                        title: item.title,
-                        image: item.image,
-                        desc: item.desc,
-                        weaving: {
-                            id: item.weaving_id,
-                            weaving_name: item.weaving_name,
-                            weaving_etnik: item.weaving_etnik,
-                            weaving_category: item.name,
-                            weaving_desc: item.weaving_desc,
-                            _links: {
-                                detail: `product/${item.product_slug}`,
-                                products_weaving: `product/${item.weaving_slug}`,
-                                products_weaving_category: `product/${item.weaving_slug}/${item.weaving_category_slug}`,
-                                wiki: `https://id.wikipedia.org/wiki/${item.weaving_name}`
-                            }
-                        }
-                    })
-                })
-
-                res.status(200).json({
-                    response_code: '200',
-                    response_desc: 'Products fetched successfully',
-                    success: true,
-                    data: response
-                });
-            }
-
-        );
-        connection.release();
-    })
+    getProductDetail(res, searchProductSlug, req.params.product_slug);
 }
 
-// Ambil semua data product berdasarkan {weaving_name} / {weaving_slug}
-const getDataProductByWeavingName = (req, res) => {
-    pool.getConnection(function (err, connection) {
-
-        if (err) throw err;
-
-        connection.query(
-            `
+const getDataProductByWeaving = (req, res) => {
+    const searchWeavingName =
+        `
             SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
             LEFT JOIN weaving ON products.weaving_id = weaving.id
             LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id
             WHERE weaving.weaving_slug = ?
-            ;`,
-            [req.params.weaving_slug],
+        ;`;
 
-            function (error, results) {
-                if (error) throw error;
-
-                const response = [];
-
-                results.forEach(item => {
-                    response.push({
-                        id: item.id,
-                        title: item.title,
-                        image: item.image,
-                        weaving: {
-                            id: item.weaving_id,
-                            weaving_name: item.weaving_name,
-                            weaving_etnik: item.weaving_etnik,
-                            weaving_category: item.name,
-                            _links: {
-                                detail: `product/${item.product_slug}`,
-                                products_weaving: `product/${item.weaving_slug}`,
-                                products_weaving_category: `product/${item.weaving_slug}/${item.weaving_category_slug}`,
-                                wiki: `https://id.wikipedia.org/wiki/${item.weaving_name}`
-                            }
-                        }
-                    })
-                })
-
-                res.status(200).json({
-                    response_code: '200',
-                    response_desc: 'Products fetched successfully',
-                    success: true,
-                    data: response
-                });
-            }
-
-        );
-        connection.release();
-    })
+    getProductWeaving(res, searchWeavingName, req.params.weaving_slug);
 }
-
 
 const getDataProductByWeavingCategory = (req, res) => {
-    pool.getConnection(function (err, connection) {
-
-        if (err) throw err;
-
-        connection.query(
-            `
-            SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
-            LEFT JOIN weaving ON products.weaving_id = weaving.id
-            LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id
-            WHERE weaving.weaving_slug = ? AND weaving_category.weaving_category_slug = ?
-            ;`,
-            [req.params.weaving_slug, req.params.weaving_category_slug],
-
-            function (error, results) {
-                if (error) throw error;
-
-                const response = [];
-
-                results.forEach(item => {
-                    response.push({
-                        id: item.id,
-                        title: item.title,
-                        image: item.image,
-                        weaving: {
-                            id: item.weaving_id,
-                            weaving_name: item.weaving_name,
-                            weaving_etnik: item.weaving_etnik,
-                            weaving_category: item.name,
-                            _links: {
-                                detail: `product/${item.product_slug}`,
-                                products_weaving: `product/${item.weaving_slug}`,
-                                products_weaving_category: `product/${item.weaving_slug}/${item.weaving_category_slug}`,
-                                wiki: `https://id.wikipedia.org/wiki/${item.weaving_name}`
-                            }
-                        }
-                    })
-                })
-
-                res.status(200).json({
-                    response_code: '200',
-                    response_desc: 'Products fetched successfully',
-                    success: true,
-                    data: response
-                });
-            }
-        );
-        connection.release();
-    })
+    getProductByWeavingAndWeavingCategorySlug(res, req.params.weaving_slug, req.params.weaving_category_slug);
 }
 
-const getDetailProduct = (req, res) => {
+const insertDataProduct = (req, res) => {
+    const data = {
+        title: req.body.title,
+        product_slug: req.body.title.toLowerCase().replace(/ /g, '-') + '-' + Math.floor(Math.random() * 100),
+        weaving_id: req.body.weaving_id,
+        weaving_category_id: req.body.weaving_category_id,
+        image: req.body.image,
+        desc: req.body.desc
+    }
+    const insertQuery = `INSERT INTO products SET ?`;
+    insertProduct(res, insertQuery, data);
+}
 
-    pool.getConnection(function (err, connection) {
+const updateDataProduct = (req, res) => {
+    const data = {
+        title: req.body.title,
+        product_slug: req.body.title.toLowerCase().replace(/ /g, '-') + '-' + Math.floor(Math.random() * 100),
+        weaving_id: req.body.weaving_id,
+        weaving_category_id: req.body.weaving_category_id,
+        image: req.body.image,
+        desc: req.body.desc
+    }
+    const updateQuery = `UPDATE products SET ? WHERE product_slug = ?`;
+    updateProduct(res, updateQuery, data, req.params.product_slug);
+}
 
-        if (err) throw err;
-
-        connection.query(
-            `
-            SELECT products.id, product_slug, title, image, products.weaving_id, weaving.weaving_name, weaving.weaving_slug, weaving.weaving_etnik, weaving_category.name, weaving_category.weaving_category_slug FROM products
-            LEFT JOIN weaving ON products.weaving_id = weaving.id
-            LEFT JOIN weaving_category ON products.weaving_category_id = weaving_category.id
-            WHERE weaving.weaving_slug = ?
-            ;`,
-            [req.params.detail],
-
-            function (error, results) {
-                if (error) throw error;
-
-                const response = [];
-
-                results.forEach(item => {
-                    response.push({
-                        id: item.id,
-                        title: item.title,
-                        image: item.image,
-                        weaving: {
-                            id: item.weaving_id,
-                            weaving_name: item.weaving_name,
-                            weaving_etnik: item.weaving_etnik,
-                            weaving_category: item.name,
-                            _links: {
-                                detail: `product/${item.product_slug}`,
-                                products_weaving: `product/${item.weaving_slug}`,
-                                products_weaving_category: `product/${item.weaving_slug}/${item.weaving_category_slug}`,
-                                wiki: `https://id.wikipedia.org/wiki/${item.weaving_name}`
-                            }
-                        }
-                    })
-                })
-
-                res.status(200).json({
-                    response_code: '200',
-                    response_desc: 'Products fetched successfully',
-                    success: true,
-                    data: response
-                });
-            }
-
-        );
-
-        connection.release();
-    })
-
+const deleteDataProduct = (req, res) => {
+    const deleteQuery = `DELETE FROM products WHERE product_slug = ?`;
+    deleteProduct(res, deleteQuery, req.params.product_slug);
 }
 
 module.exports = {
     getDataProduct,
-    getDataProductBySlug,
-    getDataProductByWeavingName,
+    getDataProductByDetail,
+    getDataProductByWeaving,
     getDataProductByWeavingCategory,
-    getDetailProduct
+    insertDataProduct,
+    updateDataProduct,
+    deleteDataProduct
 }

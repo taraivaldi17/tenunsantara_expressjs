@@ -1,41 +1,50 @@
 const router = require('express').Router();
 const {
     tenun,
-    product
+    product,
+    motif
 } = require('../controllers');
 
 //----------------------- Routing Data Product -----------------------//
-// GET localhost:8000/products => Ambil semua data product
-router.get('/api/products', product.getDataProduct);
 
-router.get('/api/products/:detail', product.getDetailProduct);
+router.get('/products', product.getDataProduct);
 
-// GET localhost:8000/products/{weaving_slug} => Menampilkan semua data product berdasarkan {weaving_name} / {weaving_slug}
-// router.get('/api/products/:weaving_slug', product.getDataProductByWeavingName);
+router.get('/product/:product_slug', product.getDataProductByDetail);
 
-// GET localhost:8000/products/{product_slug} => Menampilkan detail produk berdasarkan {product_slug}
-// router.get('/api/products/:product_slug', product.getDataProductBySlug);
+router.get('/products/:weaving_slug', product.getDataProductByWeaving);
 
-// GET localhost:8000/products/{weaving_slug}/{weaving_category_slug}, - Menampilkan list produk berdasarkan {weaving_name}
-router.get('/api/products/:weaving_slug/:weaving_category_slug', product.getDataProductByWeavingCategory);
+router.get('/products/:weaving_slug/:weaving_category_slug', product.getDataProductByWeavingCategory);
+
+router.post('/product/add', product.insertDataProduct);
+
+router.put('/product/edit/:product_slug', product.updateDataProduct);
+
+router.delete('/product/delete/:product_slug', product.deleteDataProduct);
 
 //----------------------- Routing Data Tenun -----------------------//
-// GET localhost:8000/ => Ambil semua data tenun
-// router.get('/', tenun.getDataTenun);
 
-// GET localhost:8000/tenun => Ambil semua data tenun
-// router.get('/tenun', tenun.getDataTenun);
+router.get('/weavings', tenun.getDataTenun);
 
-// GET localhost:8000/tenun/{id} => Ambil semua data tenun berdasarkan {id}
-// router.get('/tenun/:id', tenun.getDatatenunByID);
+router.get('/weaving/:weaving_slug', tenun.getDataTenunByWeaving_slug);
 
-// POST localhost:8000/tenun/add => Tambah data tenun ke database
-// router.post('/tenun/add', tenun.addDatatenun);
+router.post('/weavings/add', tenun.addDataTenun);
 
-// PUT localhost:8000/tenun/2 => Edit data tenun
-// router.put('/tenun/edit', tenun.editDatatenun);
+router.put('/weaving/edit/:weaving_slug', tenun.editDataTenun);
 
-// DELETE localhost:8000/tenun/delete => Delete data tenun
-// router.delete('/tenun/delete/', tenun.deleteDatatenun);
+router.delete('/weaving/delete/:weaving_slug', tenun.deleteDataTenun);
+
+// ----------------------- Routing Data Motif -----------------------//
+
+router.get('/motifs', motif.getDataMotif);
+
+router.get('/motif/:weaving_category_slug', motif.getDataMotifBySlug);
+
+router.get('/motifs/:weaving_slug', motif.getDataMotifByWeavingSlug);
+
+router.post('/motifs/add', motif.addDataMotif);
+
+router.put('/motif/edit/:weaving_category_slug', motif.editDataMotif);
+
+router.delete('/motif/delete/:weaving_category_slug', motif.deleteDataMotif);
 
 module.exports = router;
